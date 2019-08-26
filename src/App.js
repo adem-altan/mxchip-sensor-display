@@ -12,6 +12,7 @@ class App extends Component {
     this.state = {
       deviceStatus: 'Offline',
       seconds: timeInterval,
+      lastSeen: 'N/A',
       current: {
         temperature: null,
         humidity: null,
@@ -57,12 +58,13 @@ class App extends Component {
     try {
       const messages = await receiver.receiveMessages(1)
       console.log("Received messages:");
-      if(messages) 
+      if(messages.length != 0) 
       {
         messages.map(message =>
           this.setState({
             ...this.state,
             deviceStatus: 'Online',
+            lastSeen: this.getDate(),
             current: {
               temperature: message.body.current_temperature,
               humidity: message.body.humidity_level,
@@ -81,7 +83,12 @@ class App extends Component {
           }))
       } else {
         this.setState({
-          deviceStatus: 'Offline'
+          deviceStatus: 'Offline',
+          current: {
+            temperature: 'N/A',
+            humidity: 'N/A',
+            pressure: 'N/A'
+          }
         })
       }
       console.log(messages.map(message => message.body));
@@ -90,7 +97,12 @@ class App extends Component {
       await sbClient.close();
     }
   }
-
+  getDate()
+  {
+    let currentDateTime = new Date();
+    console.log(currentDateTime);
+    return currentDateTime;
+  }
   getLowestTemperature(message)
   {
     if(message.body.current_temperature < this.state.lowest.temperature || this.state.lowest.temperature === null)
@@ -145,7 +157,7 @@ class App extends Component {
       <header className="App-header">
         <p>
           Updating in: {this.state.seconds} seconds <br /><br />
-          Device Status: {this.state.deviceStatus}
+          Last Seen: {this.state.lastSeen.toString()}
         </p>
         <table>
           <tbody>
