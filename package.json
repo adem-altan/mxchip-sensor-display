@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@azure/service-bus": "^1.0.3",
+    "lodash.template": "^4.5.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-scripts": "3.1.1"
